@@ -17,11 +17,17 @@ bot = commands.Bot(command_prefix='l!', intents=intents)
 @bot.tree.error
 async def on_command_error(interaction: discord.Interaction, error):
     if isinstance(error, app_commands.CheckFailure):
-        await interaction.response.send_message("You don't have permissions to use this command.", ephemeral=True)
+        try:
+            await interaction.response.send_message("You don't have permissions to use this command.", ephemeral=True)
+        except:
+            await interaction.followup.send("You don't have permissions to use this command.", ephemeral=True)
     else:
-        await interaction.response.send_message("An unknown error occurred.", ephemeral=True)
-    print(f"Error: {error}")
-    print(f"Error Initiated By: {interaction.user.name} ({interaction.user.id})")
+        try:
+            await interaction.response.send_message("An unknown error occurred. Please try again later.", ephemeral=True)
+        except:
+            await interaction.followup.send("An unknown error occurred. Please try again later.", ephemeral=True)
+        
+        print(f"Unhandled Error: {error} in app command by {interaction.user} ({interaction.user.id})")
 
 # On ready event, syncing commands, and changing bot's status to Watching Snapchat
 @bot.event
